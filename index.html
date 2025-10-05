@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Ministry of Education - Mock</title>
+<style>
+  :root{
+    --page-bg: #f0f0f0;
+    --container-bg: #ffffff;
+    --header-dark: #0b6126;
+    --header-mid:  #157a34;
+    --header-light:#1aa34a;
+    --header-title:#d9f5b0;
+    --header-sub:  #ffffff;
+    --logo-box-bg: #f7f7f7;
+    --form-border: #cfcfcf;
+    --input-bg: #ffffff;
+    --muted: #777777;
+    --footer-border: #7fc07a;
+    --button-bg: #efefef;
+    --button-border: #bdbdbd;
+  }
+
+  html,body{
+    height:100%;
+    margin:0;
+    font-family: "Helvetica Neue", Arial, sans-serif;
+    background: var(--page-bg);
+    color: #222;
+  }
+
+  .outer {
+    width: 760px;
+    margin: 30px auto;
+    background: var(--container-bg);
+    border: 1px solid #d0d0d0;
+    border-radius: 6px;
+    box-shadow: 0 6px 18px rgba(0,0,0,0.05);
+    overflow: hidden;
+  }
+
+  .top {
+    display: flex;
+    gap: 14px;
+    align-items: center;
+    padding: 12px 14px;
+    background:
+      repeating-linear-gradient(135deg, rgba(255,255,255,0.03) 0 20px, transparent 20px 40px),
+      linear-gradient(90deg, var(--header-dark) 0%, var(--header-mid) 55%, var(--header-light) 100%);
+    color: var(--header-sub);
+  }
+
+  .logo-area { width: 92px; height: 92px; background: var(--logo-box-bg); border-radius: 6px; display:flex; align-items:center; justify-content:center; padding:8px; box-shadow: inset 0 1px 0 rgba(255,255,255,0.6);}
+  .logo-area img { width: 100px; height: 100px; object-fit: contain; }
+
+  .header-text { flex: 1; line-height:1.05; }
+  .header-text h1{ margin:0; font-size:20px; font-weight:700; color: var(--header-title); letter-spacing:0.2px; }
+  .header-text h2{ margin:6px 0 0 0; font-size:16px; font-weight:800; color: #fff; }
+  .header-subline { margin-top:6px; font-size:12px; color: rgba(255,255,255,0.92); opacity:0.95; font-weight:600; }
+
+  .header-right { width: 170px; text-align: center; }
+  .official { background: linear-gradient(180deg, rgba(255,255,255,0.06), rgba(255,255,255,0.03)); padding:6px 8px; font-size:12px; border-radius:4px; color: rgba(255,255,255,0.95); border: 1px solid rgba(255,255,255,0.03); }
+
+  .main { padding: 28px 30px; display:flex; align-items:center; justify-content:center; }
+
+  .form-box { width: 520px; border: 1px solid var(--form-border); padding: 20px 24px; background: #fff; box-shadow: 0 2px 6px rgba(0,0,0,0.02); }
+
+  .form-table { width:100%; border-collapse: collapse; font-size:14px; color: #222; }
+  .form-table td { padding: 8px 6px; vertical-align: middle; }
+  .label { width: 36%; font-weight:600; color: #222; text-align:right; padding-right: 12px; }
+  .field { width: 64%; text-align:left; }
+
+  select, input[type="text"] { width: 240px; padding:7px 8px; font-size:14px; border: 1px solid #cfcfcf; border-radius:3px; background: var(--input-bg); box-sizing: border-box; }
+
+  .math-input { width: 120px; }
+
+  .actions { text-align:center; margin-top:12px; }
+  input[type="submit"], input[type="reset"]{ background: var(--button-bg); border: 1px solid var(--button-border); padding:7px 14px; border-radius:3px; cursor: pointer; font-weight:600; margin-left:6px; }
+
+  .bottom { padding: 12px 18px; border-top: 4px solid var(--footer-border); font-size:13px; color: var(--muted); display:flex; flex-direction:column; justify-content:center; align-items:center; background: #fafafa; gap:8px; }
+  .powered { display:flex; align-items:center; gap:8px; }
+  .powered img{ height:50px; }
+
+  @media (max-width:820px){
+    .outer { width: 96%; margin:18px auto; }
+    .header-right { display:none; }
+    .form-box { width:100%; box-sizing:border-box; }
+    .label, .field { display:block; width:100%; text-align:left; padding:6px 0; }
+    .label { font-weight:700; }
+    select, input[type="text"] { width:100%; }
+  }
+
+  /* Modal styles with pop-up animation */
+  .modal {
+    display: none;
+    position: fixed;
+    z-index: 9999;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0,0,0,0.6);
+    align-items: center;
+    justify-content: center;
+  }
+
+  .modal.show {
+    display: flex;
+    animation: fadeIn 0.3s ease forwards;
+  }
+
+  .modal-content {
+    position: center;
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 6px;
+    max-width: 600px;
+    width: 90%;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+    transform: scale(0);
+    animation: popUp 0.4s ease forwards;
+  }
+
+  .close-btn {
+    position: absolute;
+    top: 8px;
+    right: 12px;
+    font-size: 20px;
+    font-weight: bold;
+    color: #555;
+    cursor: pointer;
+  }
+
+  .modal video { width: 61%; border-radius: 6px; }
+
+  @keyframes popUp {
+    0% { transform: scale(0.5); opacity: 0; }
+    60% { transform: scale(1.1); opacity: 1; }
+    100% { transform: scale(1); opacity: 1; }
+  }
+
+  @keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+</style>
+</head>
+<body>
+<div class="outer">
+  <div class="top" role="banner">
+    <div class="logo-area"><img src="gov.png" alt="Govt Logo"></div>
+    <div class="header-text" role="heading" aria-level="1">
+      <h1>Ministry of Education</h1>
+      <h2>Intermediate and Secondary Education Boards<br>Bangladesh</h2>
+      <div class="header-subline">Official Website of Education Board</div>
+    </div>
+    <div class="header-right"><div class="official">Official Website<br>of Education Board</div></div>
+  </div>
+
+  <div class="main">
+    <div class="form-box" role="main" aria-labelledby="resultform">
+      <form id="resultform" action="#" method="get" novalidate>
+        <table class="form-table" role="presentation">
+          <tr><td class="label">Examination :</td>
+              <td class="field">
+                <select name="exam" required>
+                  <option value="">Select One</option>
+                  <option value="SSC">SSC/Dakhil/Equivalent</option>
+                  <option value="JSC">JSC/JDC</option>
+                  <option value="SSC_Dakhil">SSC/Dakhil</option>
+                  <option value="SSC_Voc">SSC(Vocational)</option>
+                  <option value="HSC">HSC/Alim</option>
+                  <option value="HSC_Voc">HSC(Vocational)</option>
+                  <option value="HSC_BM">HSC(BM)</option>
+                  <option value="Diploma_Com">Diploma in Commerce</option>
+                  <option value="Diploma_BS">Diploma in Business Studies</option>
+                </select>
+              </td></tr>
+
+          <tr><td class="label">Year :</td>
+              <td class="field">
+                <select name="year" required>
+                  <option value="">Select One</option>
+                  <option value="2025">2025</option>
+                  <option value="2024">2024</option>
+                  <option value="2023">2023</option>
+                  <option value="2022">2022</option>
+                  <option value="2021">2021</option>
+                  <option value="2020">2020</option>
+                  <option value="2019">2019</option>
+                </select>
+              </td></tr>
+
+          <tr><td class="label">Board :</td>
+              <td class="field">
+                <select name="board" required>
+                  <option value="">Select One</option>
+                  <option value="Barisal">Barisal</option>
+                  <option value="Chittagong">Chittagong</option>
+                  <option value="Comilla">Comilla</option>
+                  <option value="Dhaka">Dhaka</option>
+                  <option value="Dinajpur">Dinajpur</option>
+                  <option value="Jessore">Jessore</option>
+                  <option value="Mymensingh">Mymensingh</option>
+                  <option value="Rajshahi">Rajshahi</option>
+                  <option value="Rangpur">Rangpur</option>
+                  <option value="Sylhet">Sylhet</option>
+                  <option value="Madrasah">Madrasah</option>
+                  <option value="Technical">Technical</option>
+                  <option value="DIBS">DIBS(Dhaka)</option>
+                </select>
+              </td></tr>
+
+          <tr><td class="label">Roll :</td><td class="field"><input type="text" name="roll" required></td></tr>
+          <tr><td class="label">Reg: No :</td><td class="field"><input type="text" name="regno" required></td></tr>
+          <tr><td class="label">7 + 3 =</td><td class="field"><input class="math-input" type="text" name="captcha" required></td></tr>
+        </table>
+        <div class="actions">
+          <input type="reset" value="Reset">
+          <input type="submit" value="Submit">
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <div class="bottom">
+    <div>©2005-2025 Ministry of Education, All rights reserved.</div>
+    <div class="powered"><div style="font-size:13px;color:#6b6b6b">Powered by</div><img src="teletalk.webp" alt="Teletalk"></div>
+  </div>
+</div>
+
+<!-- Modal -->
+<div id="videoModal" class="modal">
+  <div class="modal-content">
+    <span class="close-btn">&times;</span>
+    <video id="resultVideo" src="vdo.mp4" controls></video>
+  </div>
+</div>
+
+<script>
+const rollInput = document.querySelector('input[name="roll"]');
+const regInput = document.querySelector('input[name="regno"]');
+const form = document.getElementById("resultform");
+const modal = document.getElementById("videoModal");
+const closeBtn = modal.querySelector(".close-btn");
+
+// Restrict roll to 6 digits
+rollInput.addEventListener('input', () => {
+  rollInput.value = rollInput.value.replace(/\D/g, '');
+  if (rollInput.value.length > 6) rollInput.value = rollInput.value.slice(0,6);
+});
+
+// Restrict reg. no to 10 digits
+regInput.addEventListener('input', () => {
+  regInput.value = regInput.value.replace(/\D/g, '');
+  if (regInput.value.length > 10) regInput.value = regInput.value.slice(0,10);
+});
+
+// Form submission
+form.addEventListener("submit", function(e){
+  e.preventDefault();
+
+  const exam = form.exam.value;
+  const year = form.year.value;
+  const board = form.board.value;
+  const roll = rollInput.value.trim();
+  const regno = regInput.value.trim();
+  const captcha = form.captcha.value.trim();
+  const correctCaptcha = 10;
+
+  if(!exam){ alert("❌ Please select an Examination."); return; }
+  if(!year){ alert("❌ Please select a Year."); return; }
+  if(!board){ alert("❌ Please select a Board."); return; }
+  if(roll.length !==6){ alert("❌ Roll number must be exactly 6 digits."); return; }
+  if(regno.length !==10){ alert("❌ Registration number must be exactly 10 digits."); return; }
+  if(parseInt(captcha)!==correctCaptcha){ alert("❌ Incorrect CAPTCHA!"); return; }
+
+  modal.classList.add("show");
+  document.getElementById("resultVideo").play();
+});
+
+// Close modal
+function closeModal(){
+  modal.classList.remove("show");
+  document.getElementById("resultVideo").pause();
+}
+
+closeBtn.addEventListener("click", closeModal);
+window.addEventListener("click", (e) => { if(e.target === modal) closeModal(); });
+</script>
+</body>
+</html>
